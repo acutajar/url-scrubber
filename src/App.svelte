@@ -1,9 +1,8 @@
 <script>
   import * as Papa from "papaparse";
   import { badWords, badTLDs } from "./removed-words.js";
-  let uploadedFile = "";
   async function scrub() {
-    uploadedFile = document.getElementById("file-input").files[0];
+    const uploadedFile = document.getElementById("file-input").files[0];
     Papa.parse(uploadedFile, {
       header: true,
       complete: function (results) {
@@ -18,11 +17,37 @@
 
     let linkingTo = results.map((item) => item["Linking To"].split("\r\n"));
     linkingTo = [].concat.apply([], linkingTo);
-    const linksArr = linkingFrom.map((val, i) => [val, linkingTo[i]]);
+    const linksArr = linkingFrom.map((val, i) => [linkingTo[i], val]);
     scrubLinks(linksArr);
   };
 
-  const scrubLinks = (arr) => {};
+  let badTLDsObj = {};
+  badTLDs.forEach((tld) => (badTLDsObj[tld] = ""));
+
+  const scrubLinks = (arr) => {
+    let cleanLinks = [];
+    arr.forEach((element) => {
+      if (!checkDomain(element[1]) || !checkTLD(element[1]))
+        cleanLinks.push(element);
+    });
+    console.log("clean", cleanLinks);
+  };
+
+  function checkDomain(url) {
+    for (let i = 0; i < badWords.length; i++) {
+      if (url.includes(badWords[i])) {
+        // console.log(url, badWords[i]);
+        return false;
+      }
+    }
+    return true;
+  }
+
+  function checkTLD(url) {
+    url = new URL(url);
+    let tld = "." + url.hostname.split(".").pop();
+    return !(tld in badTLDsObj);
+  }
 </script>
 
 <main>
