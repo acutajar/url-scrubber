@@ -1,5 +1,6 @@
 <script>
   import * as Papa from "papaparse";
+  import { badWords, badTLDs } from "./removed-words.js";
   let uploadedFile = "";
   async function scrub() {
     uploadedFile = document.getElementById("file-input").files[0];
@@ -17,7 +18,11 @@
 
     let linkingTo = results.map((item) => item["Linking To"].split("\r\n"));
     linkingTo = [].concat.apply([], linkingTo);
+    const linksArr = linkingFrom.map((val, i) => [val, linkingTo[i]]);
+    scrubLinks(linksArr);
   };
+
+  const scrubLinks = (arr) => {};
 </script>
 
 <main>
