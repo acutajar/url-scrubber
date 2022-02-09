@@ -39,7 +39,7 @@
   const scrubLinks = (arr) => {
     let cleanLinks = [];
     arr.forEach((element) => {
-      if (!checkDomain(element[1]) || !checkTLD(element[1]))
+      if (checkDomain(element[1]) && checkTLD(element[1]))
         cleanLinks.push(element);
     });
     createWorkbook(cleanLinks);
